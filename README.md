@@ -4,12 +4,12 @@ Solving [cryptopals](https://cryptopals.com) challenges (in Python) !
 
 ## Progress
 
-> Progress: 0/66 (0.00 %) completed (last completed, Challenge 1)
+> Progress: 2/66 (3.03 %) completed (last completed, Challenge 2)
 
 ### Set 1
 
-- [ ] **Challenge 1** *Convert hex to base64*
-- [ ] **Challenge 2** *Fixed XOR*
+- [x] **Challenge 1** *Convert hex to base64*
+- [x] **Challenge 2** *Fixed XOR*
 - [ ] **Challenge 3** *Single-byte XOR cipher*
 - [ ] **Challenge 4** *Detect single-character XOR*
 - [ ] **Challenge 5** *Implement repeating-key XOR*

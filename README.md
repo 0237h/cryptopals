@@ -8,6 +8,16 @@ Solving [cryptopals](https://cryptopals.com) challenges (in Python) ! Limiting m
 Python 3.11.2
 ```
 
+**To validate challenges**
+```console
+(.venv) cryptopals$ pytest */*.py
+```
+
+**To run a particular challenge**
+```console
+(.venv) cryptopals$ python set1/challenge1.py
+```
+
 ## Progress
 
 > Progress: 4/66 (6.06 %) completed (last completed, Challenge 4)

@@ -1,6 +1,12 @@
 # cryptopals
 
-Solving [cryptopals](https://cryptopals.com) challenges (in Python) !
+Solving [cryptopals](https://cryptopals.com) challenges (in Python) ! Limiting myself to only use modules from the [standard library](https://docs.python.org/3.11/). 
+
+**Environment**
+```console
+(.venv) cryptopals$ python --version
+Python 3.11.2
+```
 
 ## Progress
 

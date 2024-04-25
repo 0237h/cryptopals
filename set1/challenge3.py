@@ -50,7 +50,7 @@ def compute_english_phrase_score(input_string: str) -> float:
     '''
 
     return sum([
-        abs(LETTERS_FREQ_EN.get(c.upper(), 0.) - f)
+        abs(LETTERS_FREQ_EN.get(c.upper(), -10*f) - f)  # Apply big penalty if the letter isn't in the A-Z range
         for c, f in character_frequency(input_string).items()
     ])
 

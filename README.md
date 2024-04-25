@@ -20,7 +20,7 @@ Python 3.11.2
 
 ## Progress
 
-> Progress: 4/66 (6.06 %) completed (last completed, Challenge 4)
+> Progress: 6/66 (9.09 %) completed (last completed, Challenge 6)
 
 ### Set 1
 
@@ -28,8 +28,8 @@ Python 3.11.2
 - [x] **Challenge 2** *Fixed XOR*
 - [x] **Challenge 3** *Single-byte XOR cipher*
 - [x] **Challenge 4** *Detect single-character XOR*
-- [ ] **Challenge 5** *Implement repeating-key XOR*
-- [ ] **Challenge 6** *Break repeating-key XOR*
+- [x] **Challenge 5** *Implement repeating-key XOR*
+- [x] **Challenge 6** *Break repeating-key XOR*
 - [ ] **Challenge 7** *AES in ECB mode*
 - [ ] **Challenge 8** *Detect AES in ECB mode*
 

@@ -48,8 +48,6 @@ def compute_english_phrase_score(input_string: str) -> float:
     '''
     Sums the differences in frequencies observed in the text from the reference. Lower score (closer to 0) is better.
     '''
-    if any([c not in printable for c in input_string]):
-        return 100.  # Return bad score in case of non-printable character in input
 
     return sum([
         abs(LETTERS_FREQ_EN.get(c.upper(), 0.) - f)

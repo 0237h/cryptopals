@@ -1,7 +1,7 @@
 from typing import Tuple
 from challenge2 import xor
 from collections import defaultdict
-from string import printable
+from string import ascii_letters, ascii_uppercase, printable, whitespace
 
 # Retrieved from https://en.wikipedia.org/wiki/Letter_frequency
 LETTERS_FREQ_EN = {
@@ -50,7 +50,9 @@ def compute_english_phrase_score(input_string: str) -> float:
     '''
 
     return sum([
-        abs(LETTERS_FREQ_EN.get(c.upper(), -10*f) - f)  # Apply big penalty if the letter isn't in the A-Z range
+        # Apply big penalty if the letter isn't an English letter or whitespace.
+        # `string.printable` set is a bit too large for filtering possible English phrases.
+        abs(LETTERS_FREQ_EN.get(c.upper(), -10*f if c not in ascii_letters and c not in whitespace else 0.) - f)
         for c, f in character_frequency(input_string).items()
     ])
 
@@ -68,12 +70,8 @@ def break_single_byte_xor_cipher(input_hex: str) -> Tuple[str, str, float]:
         score = compute_english_phrase_score(decoded)
 
         if score < high_score_result[2]:
-            n_upper = sum(1 for c in decoded if c.isupper())
-            n_lower = sum(1 for c in decoded if c.islower())
-            c = c.upper() if n_upper > n_lower else c.lower()  # Determine most probable casing for XOR key
-
             high_score_result = (
-                xor(hex_bytes, str.encode(c*len(hex_bytes))).decode(errors="replace"),
+                decoded,
                 c,
                 score
             )

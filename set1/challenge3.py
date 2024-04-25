@@ -68,7 +68,15 @@ def break_single_byte_xor_cipher(input_hex: str) -> Tuple[str, str, float]:
         score = compute_english_phrase_score(decoded)
 
         if score < high_score_result[2]:
-            high_score_result = (decoded, c, score)
+            n_upper = sum(1 for c in decoded if c.isupper())
+            n_lower = sum(1 for c in decoded if c.islower())
+            c = c.upper() if n_upper > n_lower else c.lower()  # Determine most probable casing for XOR key
+
+            high_score_result = (
+                xor(hex_bytes, str.encode(c*len(hex_bytes))).decode(errors="replace"),
+                c,
+                score
+            )
 
     return high_score_result
 

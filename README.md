@@ -20,7 +20,7 @@ Python 3.11.2
 
 ## Progress
 
-> Progress: 8/66 (12.12 %) completed (last completed, Challenge 8)
+> Progress: 11/66 (16.66 %) completed (last completed, Challenge 11)
 
 ### Set 1
 
@@ -35,9 +35,9 @@ Python 3.11.2
 
 ### Set 2
 
-- [ ] **Challenge 9** *Implement PKCS#7 padding*
-- [ ] **Challenge 10** *Implement CBC mode*
-- [ ] **Challenge 11** *An ECB/CBC detection oracle*
+- [x] **Challenge 9** *Implement PKCS#7 padding*
+- [x] **Challenge 10** *Implement CBC mode*
+- [x] **Challenge 11** *An ECB/CBC detection oracle*
 - [ ] **Challenge 12** *Byte-at-a-time ECB decryption (Simple)*
 - [ ] **Challenge 13** *ECB cut-and-paste*
 - [ ] **Challenge 14** *Byte-at-a-time ECB decryption (Harder)*

@@ -1,7 +1,14 @@
 from collections import Counter
+from typing import List, Tuple
 
 
-PATTERN_LENGTH = 16
+def find_patterns(data: str, pattern_length: int = 16) -> List[Tuple[str, int]]:
+    return [
+        (pattern, count) for pattern, count in Counter(
+            [data[i:i+pattern_length]
+             for i in range(0, len(data), pattern_length)]
+        ).items() if count > 1
+    ]
 
 
 def test():
@@ -9,13 +16,8 @@ def test():
     possible_ecb = (line_count, "")
     for line in open("./set1/challenge_8.txt"):
         line = line.strip()
-        patterns = [
-            (line_count, pattern, count) for pattern, count in Counter(
-                [line[i:i+PATTERN_LENGTH]
-                 for i in range(0, len(line), PATTERN_LENGTH)]
-            ).items() if count > 1
-        ]
 
+        patterns = find_patterns(line)
         if patterns:
             print(patterns)
             possible_ecb = (line_count, line)

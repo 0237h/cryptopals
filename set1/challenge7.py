@@ -212,7 +212,7 @@ def _invAes128(bytes_in: bytes, round_keys: List[bytes]) -> bytes:
     return state
 
 
-def encrypt_aes128(plaintext: bytes, key: bytes) -> bytearray:
+def encrypt_aes128_ecb(plaintext: bytes, key: bytes) -> bytearray:
     assert len(key) == 16, "Key must be 128 bits"
 
     padding_bytes = 16 - (len(plaintext) % 16)
@@ -229,7 +229,7 @@ def encrypt_aes128(plaintext: bytes, key: bytes) -> bytearray:
     return output_bytes
 
 
-def decrypt_aes128(ciphertext: bytes, key: bytes) -> bytearray:
+def decrypt_aes128_ecb(ciphertext: bytes, key: bytes) -> bytearray:
     assert len(key) == 16, "Key must be 128 bits"
 
     output_bytes = bytearray()
@@ -244,24 +244,24 @@ def decrypt_aes128(ciphertext: bytes, key: bytes) -> bytearray:
     return output_bytes if padding_index == -1 else output_bytes[:padding_index]
 
 
-def encrypt_aes128_str(plaintext: str, key: str) -> str:
-    return encrypt_aes128(plaintext.encode(), key.encode()).hex()
+def encrypt_aes128_ecb_str(plaintext: str, key: str) -> str:
+    return encrypt_aes128_ecb(plaintext.encode(), key.encode()).hex()
 
 
-def decrypt_aes128_str(ciphertext: str, key: str) -> str:
-    return decrypt_aes128(bytes.fromhex(ciphertext), key.encode()).decode()
+def decrypt_aes128_ecb_str(ciphertext: str, key: str) -> str:
+    return decrypt_aes128_ecb(bytes.fromhex(ciphertext), key.encode()).decode()
 
 
 def test():
     plaintext = "Hello World!"
     key = "YELLOW SUBMARINE"
-    cipher = encrypt_aes128_str(plaintext, key)
-    recovered = decrypt_aes128_str(cipher, key)
+    cipher = encrypt_aes128_ecb_str(plaintext, key)
+    recovered = decrypt_aes128_ecb_str(cipher, key)
 
     assert (plaintext == recovered)
 
     cipherfile = open("./set1/challenge_7.txt", "rb").read()
-    recovered_cipherfile = decrypt_aes128(b64decode(cipherfile), key.encode()).decode()
+    recovered_cipherfile = decrypt_aes128_ecb(b64decode(cipherfile), key.encode()).decode()
 
     assert (recovered_cipherfile[:33] == "I'm back and I'm ringin' the bell")
     print(recovered_cipherfile)

@@ -1,7 +1,9 @@
 from base64 import b64decode
+from challenge9 import pkcs7
 
 import sys
 from os import path
+
 sys.path.insert(1, path.abspath("set1"))  # Python hack to resolve set1/ challenges imports
 
 from challenge7 import _keyExpansion, _aes128, _invAes128  # noqa # type: ignore
@@ -13,7 +15,9 @@ def encrypt_aes128_cbc(plaintext: bytes, key: bytes, iv: bytes | None = None) ->
 
     if not iv:
         iv = b"\x00" * 16
+    assert len(iv) == 16, "IV must be 128 bits"
 
+    plaintext = pkcs7(plaintext, 16)
     keys = _keyExpansion(key)
     output_bytes = bytearray(_aes128(xor(plaintext[:16], iv), keys))  # Use IV for first block
 
@@ -33,6 +37,7 @@ def decrypt_aes128_cbc(ciphertext: bytes, key: bytes, iv: bytes | None = None) -
 
     if not iv:
         iv = b"\x00" * 16
+    assert len(iv) == 16, "IV must be 128 bits"
 
     keys = _keyExpansion(key)
     output_bytes = bytearray(xor(_invAes128(ciphertext[:16], keys), iv))  # Use IV for first block

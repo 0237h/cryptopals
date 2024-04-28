@@ -50,7 +50,8 @@ def decrypt_aes128_cbc(ciphertext: bytes, key: bytes, iv: bytes | None = None) -
             )
         )
 
-    return output_bytes
+    padding_byte = output_bytes[-1]  # Detect PKCS7 padding byte to truncate output
+    return output_bytes[:-padding_byte]
 
 
 def test():
@@ -65,7 +66,9 @@ def test():
         ) == bytes.fromhex("7649ABAC 8119B246 CEE98E9B 12E9197D" +
                            "5086CB9B 507219EE 95DB113A 917678B2" +
                            "73BED6B8 E3C1743B 7116E69E 22229516" +
-                           "3FF1CAA1 681FAC09 120ECA30 7586E1A7")
+                           "3FF1CAA1 681FAC09 120ECA30 7586E1A7" +
+                           # Padding block added to test vector for PKCS7 compliance
+                           "8CB82807 230E1321 D3FAE00D 18CC2012")
     )
     # NIST test vectors (https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-38a.pdf)
     assert (
@@ -73,7 +76,9 @@ def test():
             bytes.fromhex("7649ABAC 8119B246 CEE98E9B 12E9197D" +
                           "5086CB9B 507219EE 95DB113A 917678B2" +
                           "73BED6B8 E3C1743B 7116E69E 22229516" +
-                          "3FF1CAA1 681FAC09 120ECA30 7586E1A7"),
+                          "3FF1CAA1 681FAC09 120ECA30 7586E1A7" +
+                          # Padding block added to test vector for PKCS7 compliance
+                          "8CB82807 230E1321 D3FAE00D 18CC2012"),
             bytes.fromhex("2B7E1516 28AED2A6 ABF71588 09CF4F3C"),
             bytes.fromhex("00010203 04050607 08090A0B 0C0D0E0F")
         ) == bytes.fromhex("6BC1BEE2 2E409F96 E93D7E11 7393172A" +

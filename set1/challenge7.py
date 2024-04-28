@@ -238,10 +238,8 @@ def decrypt_aes128_ecb(ciphertext: bytes, key: bytes) -> bytearray:
     for x in [ciphertext[i:i+16] for i in range(0, len(ciphertext), 16)]:
         output_bytes.extend(_invAes128(x, keys))
 
-    padding_byte = output_bytes[-1]
-    padding_index = output_bytes.find(bytes([padding_byte] * padding_byte))
-
-    return output_bytes if padding_index == -1 else output_bytes[:padding_index]
+    padding_byte = output_bytes[-1]  # Detect PKCS7 padding byte to truncate output
+    return output_bytes[:-padding_byte]
 
 
 def encrypt_aes128_ecb_str(plaintext: str, key: str) -> str:

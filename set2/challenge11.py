@@ -29,6 +29,10 @@ def encrypt_with_random_key(plaintext: bytes):
         return ("CBC", encrypt_aes128_cbc(plaintext, random_128(), random_128()))  # Also randomize IV
 
 
+def detect_aes_mode(data: bytes) -> str:
+    return "ECB" if find_patterns(data.hex()) else "CBC"
+
+
 def test():
     input_ = b"\x69" * 69
     print(f"Input")
@@ -38,11 +42,9 @@ def test():
     print(f"Output (actual mode is {mode})")
     __print_block(data)
 
-    patterns = find_patterns(data.hex())
-    oracle_mode = 'ECB' if patterns else 'CBC'
-
-    assert (oracle_mode == mode)
-    print(f"\nOracle says... {oracle_mode} !")
+    detected_mode = detect_aes_mode(data)
+    assert (detect_aes_mode(data) == mode)
+    print(f"\nOracle says... {detected_mode} !")
 
 
 if __name__ == "__main__":

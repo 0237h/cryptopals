@@ -1,6 +1,4 @@
 from secrets import token_bytes, randbelow
-from collections import Counter
-import matplotlib.pyplot as plt
 from challenge10 import encrypt_aes128_cbc
 from challenge9 import pkcs7
 

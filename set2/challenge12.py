@@ -6,7 +6,6 @@ from challenge11 import detect_aes_mode, random_128
 import sys
 from os import path
 
-
 sys.path.insert(1, path.abspath("set1"))  # Python hack to resolve set1/ challenges imports
 
 from challenge7 import encrypt_aes128_ecb  # noqa # type: ignore
@@ -30,12 +29,14 @@ def get_ecb_oracle():
 def test():
     oracle = get_ecb_oracle()
 
+    k = 1
     detected_block_size = len(oracle(b'A'))
-    for k in range(2, 16):
+    while True:
         cipher_size = len(oracle(b'A' * k))
         if detected_block_size != cipher_size:
             detected_block_size = cipher_size - detected_block_size
             break
+        k += 1
 
     print(f"[+] Detected cipher block size : {detected_block_size} bytes")
 

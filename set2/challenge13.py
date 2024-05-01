@@ -69,42 +69,52 @@ def test():
 
     # Visualizing the ECB "cut-and-paste"
     # -----------------------------------
-
+    #
     # Here is what the minimal input plaintext string looks like:
     # email=?&uid=202f40f4-85d0-4dfa-b9a1-b2c1ba0d7cf0&role=user
     # ---------------|---------------|---------------|---------------|
     #     Block #1        Block #2        Block #3        Block #4
-
+    #
     # We can make the `user` portion we want to replace into its own encrypted block by providing input of right length:
     # email=aaaaaaaaaaa&uid=202f40f4-85d0-4dfa-b9a1-b2c1ba0d7cf0&role=user
     # ---------------|---------------|---------------|---------------|---------------|
     #                                                                 ^ New block
-
+    #
     # To generate the right encrypted block for the `admin` text, we use the same padding technique:
     # email=aaaaaaaaaaadmin&uid=202f40f4-85d0-4dfa-b9a1-b2c1ba0d7cf0&role=user
     # ---------------|---------------|---------------|---------------|---------------|
     #                 ^ Cut this block
+    #
     # Notice we also have random junk after `admin` that will also get parsed at the end.
     # The `urlencode` implementation used here for the parsing won't let us pad nicely and escape any byte sequence we
-    # might want to use. So we'll have to accept having a malformed UID at the end.
-
-    # Here, we also have to generate a correct padding block to prevent the padding from truncating our output based on
-    # the junk left after `admin`. We can do it like this:
-    # email=aaaaaaa&uid=202f40f4-85d0-4dfa-b9a1-b2c1ba0d7cf0&role=user
+    # might want to use. So to make the rest of `admin` block characters disappear, we have to create a padding value
+    # that will truncate all characters until our `admin` text.
+    #
+    # To do that, we have to use a value that will not be URL-encoded so only letters (both cases) and numbers. We can
+    # figure out the padding character by solving this formula: c = 16*n + 11
+    #
+    # The first n value that gives a character within the [A-z0-9] range is our padding character ! Turns out 'F' works
+    # for a value of n = 4. That means we'll need to past 4 blocks of 'F' (only last byte really needs to be 'F') for
+    # the truncation to remove 75 characters (ASCII value of 'F') which will do the trick to remove the junk characters.
+    # email=aaaaaaaaaaFFFFFFFFFFFFFFFF&uid=202f40f4-85d0-4dfa-b9a1-b2c1ba0d7cf0&role=user
     # ---------------|---------------|---------------|---------------|---------------|
-    #                                                                 ^ Padding block
-
+    #                 ^ Cut this block
+    #
     # In the end we paste our cutted block with `admin` over the last original block of the cipher and append our
-    # padding block as an additional block. So the result is decoded to this:
-    # email=uarepwned..&uid=202f40f4-85d0-4dfa-b9a1-b2c1ba0d7cf0&role=admin&uid=202f40   [PADDING]
-    # ---------------|---------------|---------------|---------------|---------------|---------------|
-    # Which gives us `admin` role !
+    # padding blocks. So the result is decoded to this:
+    # email=uarepwned..&uid=202f40f4-85d0-4dfa-b9a1-b2c1ba0d7cf0&role=admin&uid=202f40 ['F' PADDING]   ['F' PADDING]   ['F' PADDING]   ['F' PADDING] # noqa
+    # ---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
+    #                                                                 ^ Pasted block
+    #                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    #                                                                      Truncated from PKCS#7
+    # Which gives us `admin` role for any email !
 
     forged_ciphertext = encrypt_user_profile("aaaaaaaaaa" + "admin", key)[16:32]
     print(f"[*] Cut `admin` block")
     __print_block(forged_ciphertext)
 
-    padding_ciphertext = encrypt_user_profile("aaaaaaa", key)[-16:]
+    # We could also extract all intermediate ciphertext in one call to `encrypt_user_profile`
+    padding_ciphertext = encrypt_user_profile("aaaaaaaaaa" + "F" * 16, key)[16:32] * 4
     print(f"[*] Create padding block")
     __print_block(padding_ciphertext)
 

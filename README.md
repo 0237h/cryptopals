@@ -12,6 +12,7 @@ Python 3.11.2
 ```console
 (.venv) cryptopals$ pytest */*.py
 ```
+Use `-vv` and `-s` for more output.
 
 **To run a particular challenge**
 ```console

@@ -71,6 +71,14 @@ def __gal_mul(a: int, b: int) -> int:
     return r
 
 
+gal_2 = [__gal_mul(0x2, x) for x in range(256)]
+gal_3 = [__gal_mul(0x3, x) for x in range(256)]
+gal_e = [__gal_mul(0xe, x) for x in range(256)]
+gal_b = [__gal_mul(0xb, x) for x in range(256)]
+gal_d = [__gal_mul(0xd, x) for x in range(256)]
+gal_9 = [__gal_mul(0x9, x) for x in range(256)]
+
+
 def _keyExpansion(key: bytes) -> List[bytes]:
     def __subWord(w: bytes) -> bytes:
         return bytes([sbox[w[0]], sbox[w[1]], sbox[w[2]], sbox[w[3]]])
@@ -178,6 +186,28 @@ def _invMixColumns(state: bytearray) -> bytearray:
     return state
 
 
+def _mixColumnsLookup(state: bytearray) -> bytearray:
+    for i in range(4):
+        x1, x2, x3, x4 = state[i*4:(i+1)*4]
+        state[i*4] = gal_2[x1] ^ gal_3[x2] ^ x3 ^ x4
+        state[i*4 + 1] = x1 ^ gal_2[x2] ^ gal_3[x3] ^ x4
+        state[i*4 + 2] = x1 ^ x2 ^ gal_2[x3] ^ gal_3[x4]
+        state[i*4 + 3] = gal_3[x1] ^ x2 ^ x3 ^ gal_2[x4]
+
+    return state
+
+
+def _invMixColumnsLookup(state: bytearray) -> bytearray:
+    for i in range(4):
+        x1, x2, x3, x4 = state[i*4:(i+1)*4]
+        state[i*4] = gal_e[x1] ^ gal_b[x2] ^ gal_d[x3] ^ gal_9[x4]
+        state[i*4 + 1] = gal_9[x1] ^ gal_e[x2] ^ gal_b[x3] ^ gal_d[x4]
+        state[i*4 + 2] = gal_d[x1] ^ gal_9[x2] ^ gal_e[x3] ^ gal_b[x4]
+        state[i*4 + 3] = gal_b[x1] ^ gal_d[x2] ^ gal_9[x3] ^ gal_e[x4]
+
+    return state
+
+
 def _aes128(bytes_in: bytes, round_keys: List[bytes]) -> bytes:
     state = bytearray(bytes_in)
     state = _addRoundKey(state, bytes().join(round_keys[:4]))
@@ -185,7 +215,7 @@ def _aes128(bytes_in: bytes, round_keys: List[bytes]) -> bytes:
     for r in range(1, 10):
         state = _subBytes(state)
         state = _shiftRows(state)
-        state = _mixColumns(state)
+        state = _mixColumnsLookup(state)
         state = _addRoundKey(state, bytes().join(round_keys[r*4:(r+1)*4]))
 
     state = _subBytes(state)
@@ -203,7 +233,7 @@ def _invAes128(bytes_in: bytes, round_keys: List[bytes]) -> bytes:
         state = _invShiftRows(state)
         state = _invSubBytes(state)
         state = _addRoundKey(state, bytes().join(round_keys[r*4:(r+1)*4]))
-        state = _invMixColumns(state)
+        state = _invMixColumnsLookup(state)
 
     state = _invShiftRows(state)
     state = _invSubBytes(state)

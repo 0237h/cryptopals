@@ -1,3 +1,4 @@
+from typing import Callable
 import pytest
 from string import printable
 from base64 import b64decode
@@ -11,10 +12,23 @@ sys.path.insert(1, path.abspath("set1"))  # Python hack to resolve set1/ challen
 from challenge7 import encrypt_aes128_ecb  # noqa # type: ignore
 
 
+def detect_cipher_block_size(oracle: Callable[[bytes], bytes]) -> int:
+    k = 1
+    detected_block_size = len(oracle(b'A'))
+    while True:
+        cipher_size = len(oracle(b'A' * k))
+        if detected_block_size != cipher_size:
+            detected_block_size = cipher_size - detected_block_size
+            break
+        k += 1
+
+    return detected_block_size
+
+
 def get_ecb_oracle():
     key = random_128()
 
-    def _ecb_oracle(plaintext: bytes):
+    def _ecb_oracle(plaintext: bytes) -> bytes:
         return encrypt_aes128_ecb(
             plaintext + b64decode("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg" +
                                   "aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq" +
@@ -25,19 +39,11 @@ def get_ecb_oracle():
     return _ecb_oracle
 
 
-@pytest.mark.skip(reason="Byte-at-a-time ECB decryption")
+@pytest.mark.skip(reason="Byte-at-a-time ECB decryption (simple)")
 def test():
     oracle = get_ecb_oracle()
 
-    k = 1
-    detected_block_size = len(oracle(b'A'))
-    while True:
-        cipher_size = len(oracle(b'A' * k))
-        if detected_block_size != cipher_size:
-            detected_block_size = cipher_size - detected_block_size
-            break
-        k += 1
-
+    detected_block_size = detect_cipher_block_size(oracle)
     print(f"[+] Detected cipher block size : {detected_block_size} bytes")
 
     detected_mode = detect_aes_mode(oracle(b'A' * (detected_block_size * detected_block_size)))

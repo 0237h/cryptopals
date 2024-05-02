@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 13/66 (19.69 %) completed (last completed, Challenge 13)
+> Progress: 15/66 (22.72 %) completed (last completed, Challenge 15)
 
 ### Set 1
 
@@ -41,8 +41,8 @@ Use `-vv` and `-s` for more output.
 - [x] **Challenge 11** *An ECB/CBC detection oracle*
 - [x] **Challenge 12** *Byte-at-a-time ECB decryption (Simple)*
 - [x] **Challenge 13** *ECB cut-and-paste*
-- [ ] **Challenge 14** *Byte-at-a-time ECB decryption (Harder)*
-- [ ] **Challenge 15** *PKCS#7 padding validation*
+- [x] **Challenge 14** *Byte-at-a-time ECB decryption (Harder)*
+- [x] **Challenge 15** *PKCS#7 padding validation*
 - [ ] **Challenge 16** *CBC bitflipping attacks*
 
 ### Set 3

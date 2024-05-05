@@ -32,7 +32,7 @@ def encrypt_aes128_cbc(plaintext: bytes, key: bytes, iv: bytes | None = None) ->
     return output_bytes
 
 
-def decrypt_aes128_cbc(ciphertext: bytes, key: bytes, iv: bytes | None = None) -> bytearray:
+def decrypt_aes128_cbc(ciphertext: bytes, key: bytes, iv: bytes | None = None, strip_padding: bool = True) -> bytearray:
     assert len(key) == 16, "Key must be 128 bits"
 
     if not iv:
@@ -50,8 +50,11 @@ def decrypt_aes128_cbc(ciphertext: bytes, key: bytes, iv: bytes | None = None) -
             )
         )
 
-    padding_byte = output_bytes[-1]  # Detect PKCS7 padding byte to truncate output
-    return output_bytes[:-padding_byte]
+    if (strip_padding):
+        padding_byte = output_bytes[-1]  # Detect PKCS7 padding byte to truncate output
+        return output_bytes[:-padding_byte]
+    else:
+        return output_bytes
 
 
 def test():

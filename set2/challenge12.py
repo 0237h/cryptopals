@@ -17,7 +17,7 @@ def detect_cipher_block_size(oracle: Callable[[bytes], bytes]) -> int:
     detected_block_size = len(oracle(b'A'))
     while True:
         cipher_size = len(oracle(b'A' * k))
-        if detected_block_size != cipher_size:
+        if cipher_size > detected_block_size:
             detected_block_size = cipher_size - detected_block_size
             break
         k += 1

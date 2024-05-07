@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 15/66 (22.72 %) completed (last completed, Challenge 15)
+> Progress: 18/66 (27.27 %) completed (last completed, Challenge 18)
 
 ### Set 1
 
@@ -43,12 +43,12 @@ Use `-vv` and `-s` for more output.
 - [x] **Challenge 13** *ECB cut-and-paste*
 - [x] **Challenge 14** *Byte-at-a-time ECB decryption (Harder)*
 - [x] **Challenge 15** *PKCS#7 padding validation*
-- [ ] **Challenge 16** *CBC bitflipping attacks*
+- [x] **Challenge 16** *CBC bitflipping attacks*
 
 ### Set 3
 
-- [ ] **Challenge 17** *The CBC padding oracle
-- [ ] **Challenge 18** *Implement CTR, the stream cipher mode*
+- [x] **Challenge 17** *The CBC padding oracle
+- [x] **Challenge 18** *Implement CTR, the stream cipher mode*
 - [ ] **Challenge 19** *Break fixed-nonce CTR mode using substitutions*
 - [ ] **Challenge 20** *Break fixed-nonce CTR statistically*
 - [ ] **Challenge 21** *Implement the MT19937 Mersenne Twister RNG*

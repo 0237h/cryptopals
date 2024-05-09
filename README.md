@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 18/66 (27.27 %) completed (last completed, Challenge 18)
+> Progress: 19/66 (28.78 %) completed (last completed, Challenge 19)
 
 ### Set 1
 
@@ -49,7 +49,7 @@ Use `-vv` and `-s` for more output.
 
 - [x] **Challenge 17** *The CBC padding oracle
 - [x] **Challenge 18** *Implement CTR, the stream cipher mode*
-- [ ] **Challenge 19** *Break fixed-nonce CTR mode using substitutions*
+- [x] **Challenge 19** *Break fixed-nonce CTR mode using substitutions*
 - [ ] **Challenge 20** *Break fixed-nonce CTR statistically*
 - [ ] **Challenge 21** *Implement the MT19937 Mersenne Twister RNG*
 - [ ] **Challenge 22** *Crack an MT19937 seed*

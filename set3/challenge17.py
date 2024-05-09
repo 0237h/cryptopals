@@ -38,9 +38,12 @@ def cbc_oracle() -> Tuple[bytes, bytes]:
     return (encrypt_aes128_cbc(random_string, KEY, iv), iv)
 
 
-def is_valid_padding(ciphertext: bytes, iv: bytes) -> bool:
+def is_valid_padding(ciphertext: bytes, iv: bytes, plaintext: bytes | None = None) -> bool:
     try:
-        validate_pkcs7(decrypt_aes128_cbc(ciphertext, KEY, iv, strip_padding=False))
+        if plaintext:
+            validate_pkcs7(plaintext)
+        else:
+            validate_pkcs7(decrypt_aes128_cbc(ciphertext, KEY, iv, strip_padding=False))
     except ValueError:
         return False
 

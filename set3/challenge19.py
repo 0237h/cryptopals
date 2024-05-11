@@ -187,6 +187,3 @@ def test():
 
 if __name__ == "__main__":
     test()
-
-# near my hea\x16\x1aDmo
-# y is born.\x06bhnik

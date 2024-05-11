@@ -1,7 +1,7 @@
 from typing import Tuple
 from challenge2 import xor
 from collections import defaultdict
-from string import ascii_letters, ascii_uppercase, printable, whitespace
+from string import ascii_letters, whitespace
 
 # Retrieved from https://en.wikipedia.org/wiki/Letter_frequency
 LETTERS_FREQ_EN = {
@@ -65,14 +65,14 @@ def break_single_byte_xor_cipher(input_hex: str) -> Tuple[str, str, float]:
         100.  # English phrase scoring
     )
 
-    for c in printable:
-        decoded = xor(hex_bytes, str.encode(c*len(hex_bytes))).decode(errors="replace")
+    for x in range(256):
+        decoded = xor(hex_bytes, x.to_bytes()*len(hex_bytes)).decode(errors="replace")
         score = compute_english_phrase_score(decoded)
 
         if score < high_score_result[2]:
             high_score_result = (
                 decoded,
-                c,
+                chr(x),
                 score
             )
 

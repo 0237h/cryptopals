@@ -89,7 +89,7 @@ def break_repeating_key_xor(ciphertext: bytes, known_key_length=None) -> Tuple[s
         raise ValueError(f"[-] Ciphertext length must be greater or equal to {2*MIN_KEYSIZE}")
 
     plaintext = ""
-    cipherkey = ""
+    cipherkey = bytearray()
 
     for keysize in find_probable_key_lengths(ciphertext) if not known_key_length else {known_key_length}:
         chunks = [ciphertext[i:i+keysize] for i in range(0, ciphertext_len, keysize)]
@@ -98,15 +98,15 @@ def break_repeating_key_xor(ciphertext: bytes, known_key_length=None) -> Tuple[s
         # Transpose chunks
         chunks_t = list(zip(*chunks))
 
-        cipherkey = ""
+        cipherkey = bytearray()
         for (_, key, _) in [break_single_byte_xor_cipher(bytes(c).hex()) for c in chunks_t]:
-            cipherkey += key
+            cipherkey += ord(key).to_bytes()
 
         if not cipherkey:
             continue
 
         try:
-            plaintext = repeating_key_xor(ciphertext, cipherkey.encode()).decode()
+            plaintext = repeating_key_xor(ciphertext, cipherkey).decode()
         except UnicodeError:
             print(f"[*] Skipping keysize={keysize} due to Unicode decoding errors")
             continue
@@ -117,7 +117,7 @@ def break_repeating_key_xor(ciphertext: bytes, known_key_length=None) -> Tuple[s
             break
 
     print("[+] Done !")
-    return (cipherkey, plaintext)
+    return (cipherkey.decode(errors="backslashreplace"), plaintext)
 
 
 def test():

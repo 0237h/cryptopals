@@ -41,7 +41,6 @@ def mt(w, n, m, r, a, u, d, s, b, t, c, l, f):
         y = y ^ (y >> l)
 
         index += 1
-        print((MT, index))
         return w_bit_mask & y
 
     return (seed_mt, extract_number)

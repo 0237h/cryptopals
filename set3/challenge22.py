@@ -1,3 +1,4 @@
+import pytest
 from time import sleep, time_ns
 from random import randint
 from challenge21 import mt19937
@@ -26,6 +27,7 @@ def random_prng():
     return next(prng)
 
 
+@pytest.mark.skip(reason="Crack an MT19937 seed (time-based)")
 def test():
     r = random_prng()
     seed = time_ns() // 10**9

@@ -40,9 +40,9 @@ def mt(w, n, m, r, a, u, d, s, b, t, c, l, f, state: Optional[List[int]] = None)
         """Extract a tempered value based on MT[index] calling twist() every n numbers"""
         nonlocal index
         if index >= n:
-            if index > n:
+            if index > n and not state:
                 # Alternatively, seed with constant value; 5489 is used in reference C code[54]
-                print("Generator was never seeded")
+                print("[!] Generator was never seeded")
             _twist()
 
         y = MT[index]

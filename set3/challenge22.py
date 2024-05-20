@@ -4,6 +4,7 @@ from challenge21 import mt19937
 
 TARGET_SEED = None
 
+
 def random_prng():
     global TARGET_SEED
     # Wait a random number of seconds between, I don't know, 40 and 1000.

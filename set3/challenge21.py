@@ -1,6 +1,17 @@
-def mt(w, n, m, r, a, u, d, s, b, t, c, l, f):
+from typing import List, Optional
+
+MT19937_PARAMETERS = (32, 624, 397, 31, 0x9908b0df, 11, 0xffffffff, 7, 0x9d2c5680, 15, 0xefc60000, 18, 1812433253)
+MT19937_64_PARAMETERS = (64, 312, 156, 31, 0xb5026f5aa96619e9, 29, 0x5555555555555555, 17, 0x71d67fffeda60000, 37,
+                         0xfff7eee000000000, 43, 6364136223846793005)
+
+
+def mt(w, n, m, r, a, u, d, s, b, t, c, l, f, state: Optional[List[int]] = None):
     """Adapted pseudocode of https://en.wikipedia.org/w/index.php?title=Mersenne_Twister&oldid=1124934461#Pseudocode"""
     MT = [0 for _ in range(n)]
+    # Allow setting generator state
+    if state and len(state) == n:
+        MT = [k for k in state]
+
     index = n+1
     w_bit_mask = int('1'*w, 2)
     lower_mask = (1 << r) - 1  # That is, the binary number of r 1's
@@ -48,7 +59,7 @@ def mt(w, n, m, r, a, u, d, s, b, t, c, l, f):
 
 def mt19937(seed: int):
     # From https://en.cppreference.com/w/cpp/numeric/random/mersenne_twister_engine
-    s, e = mt(32, 624, 397, 31, 0x9908b0df, 11, 0xffffffff, 7, 0x9d2c5680, 15, 0xefc60000, 18, 1812433253)
+    s, e = mt(*MT19937_PARAMETERS)
 
     s(seed)
     while True:
@@ -57,8 +68,7 @@ def mt19937(seed: int):
 
 def mt19937_64(seed: int):
     # From https://en.cppreference.com/w/cpp/numeric/random/mersenne_twister_engine
-    s, e = mt(64, 312, 156, 31, 0xb5026f5aa96619e9, 29, 0x5555555555555555, 17,
-              0x71d67fffeda60000, 37, 0xfff7eee000000000, 43, 6364136223846793005)
+    s, e = mt(*MT19937_64_PARAMETERS)
 
     s(seed)
     while True:

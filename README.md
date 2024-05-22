@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 23/66 (34.84 %) completed (last completed, Challenge 23)
+> Progress: 24/66 (36.36 %) completed (last completed, Challenge 24)
 
 ### Set 1
 
@@ -54,7 +54,7 @@ Use `-vv` and `-s` for more output.
 - [x] **Challenge 21** *Implement the MT19937 Mersenne Twister RNG*
 - [x] **Challenge 22** *Crack an MT19937 seed*
 - [x] **Challenge 23** *Clone an MT19937 RNG from its output*
-- [ ] **Challenge 24** *Create the MT19937 stream cipher and break it*
+- [x] **Challenge 24** *Create the MT19937 stream cipher and break it*
 
 ### Set 4
 

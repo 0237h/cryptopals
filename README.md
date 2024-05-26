@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 25/66 (37.87 %) completed (last completed, Challenge 25)
+> Progress: 26/66 (39.39 %) completed (last completed, Challenge 26)
 
 ### Set 1
 
@@ -59,7 +59,7 @@ Use `-vv` and `-s` for more output.
 ### Set 4
 
 - [x] **Challenge 25** *Break "random access read/write" AES CTR*
-- [ ] **Challenge 26** *CTR bitflipping*
+- [x] **Challenge 26** *CTR bitflipping*
 - [ ] **Challenge 27** *Recover the key from CBC with IV=Key*
 - [ ] **Challenge 28** *Implement a SHA-1 keyed MAC*
 - [ ] **Challenge 29** *Break a SHA-1 keyed MAC using length extension*

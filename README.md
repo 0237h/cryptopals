@@ -47,7 +47,7 @@ Use `-vv` and `-s` for more output.
 
 ### Set 3
 
-- [x] **Challenge 17** *The CBC padding oracle
+- [x] **Challenge 17** *The CBC padding oracle*
 - [x] **Challenge 18** *Implement CTR, the stream cipher mode*
 - [x] **Challenge 19** *Break fixed-nonce CTR mode using substitutions*
 - [x] **Challenge 20** *Break fixed-nonce CTR statistically*

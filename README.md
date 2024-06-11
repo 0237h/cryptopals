@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 29/66 (43.93 %) completed (last completed, Challenge 29)
+> Progress: 30/66 (45.45 %) completed (last completed, Challenge 30)
 
 ### Set 1
 
@@ -63,7 +63,7 @@ Use `-vv` and `-s` for more output.
 - [x] **Challenge 27** *Recover the key from CBC with IV=Key*
 - [x] **Challenge 28** *Implement a SHA-1 keyed MAC*
 - [x] **Challenge 29** *Break a SHA-1 keyed MAC using length extension*
-- [ ] **Challenge 30** *Break an MD4 keyed MAC using length extension*
+- [x] **Challenge 30** *Break an MD4 keyed MAC using length extension*
 - [ ] **Challenge 31** *Implement and break HMAC-SHA1 with an artificial timing leak*
 - [ ] **Challenge 32** *Break HMAC-SHA1 with a slightly less artificial timing leak*
 

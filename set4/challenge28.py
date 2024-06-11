@@ -1,3 +1,6 @@
+from math import ceil
+from typing import Optional
+
 # SHA-1 blocks are 512 bits = 16 words with 1 word = 4 bytes
 BLOCK_SIZE_BYTES = 64
 BLOCK_SIZE_BITS = BLOCK_SIZE_BYTES * 8
@@ -8,25 +11,29 @@ def _circular_left_shift(word: int, n: int, shift_max: int = 32) -> int:
     assert word.bit_length() <= shift_max, f"word cannot be greater than {shift_max}"
 
     mask = int('1' * shift_max, 2)
-    return (((word << n) & mask) | (word >> (shift_max - n))) & mask
+    return ((word << n) | (word >> (shift_max - n))) & mask
 
 
-def sha1(message: bytes) -> bytes:
+def _compute_message_padding(message: bytes) -> bytes:
     message_len_bits = 8*len(message)
+    padding = '1'
 
-    # Last 64 bits are reserved for the original message length
-    padding = '1' + '0'*(BLOCK_SIZE_BITS - 65 - (message_len_bits % BLOCK_SIZE_BITS))
-    padding = int(padding, 2).to_bytes(max(1, len(padding) // 8))
+    while (message_len_bits + len(padding)) % BLOCK_SIZE_BITS != 448:
+        padding += '0'
 
-    message = message + padding + message_len_bits.to_bytes(8)
+    return int(padding, 2).to_bytes(ceil(len(padding) / 8)) + message_len_bits.to_bytes(8)
 
-    h0 = 0x67452301
-    h1 = 0xEFCDAB89
-    h2 = 0x98BADCFE
-    h3 = 0x10325476
-    h4 = 0xC3D2E1F0
 
-    for chunk in [message[k:k+BLOCK_SIZE_BYTES] for k in range(0, len(message), BLOCK_SIZE_BYTES)]:
+def sha1(
+    message: bytes,
+    internal_state: tuple[int, int, int, int, int] = (0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0),
+    padding: Optional[bytes] = None
+) -> bytes:
+    message += padding if padding else _compute_message_padding(message)
+    h0, h1, h2, h3, h4 = internal_state
+    chunks = [message[k:k+BLOCK_SIZE_BYTES] for k in range(0, len(message), BLOCK_SIZE_BYTES)]
+
+    for chunk in chunks:
         chunk_words = list([int.from_bytes(chunk[k:k+4]) for k in range(0, BLOCK_SIZE_BYTES, 4)])
         assert len(chunk_words) == 16, f"Failed to break chunk into 16 words: got length of {len(chunk_words)}"
 
@@ -75,7 +82,7 @@ def sha1(message: bytes) -> bytes:
     return ((h0 << 128) | (h1 << 96) | (h2 << 64) | (h3 << 32) | h4).to_bytes(20)
 
 
-def mac_sha1(key: bytes, message: bytes):
+def mac_sha1(key: bytes, message: bytes) -> bytes:
     return sha1(key + message)
 
 
@@ -173,11 +180,30 @@ def test_sha1():
         bytes.fromhex('6fda97527a662552be15efaeba32a3aea4ed449abb5c1ed8d9bfff544708a425d69b72')
     ).hex() == '01b4646180f1f6d2e06bbe22c20e50030322673a'
 
+    # Len = 448
+    assert sha1(bytes.fromhex(
+        '0321736beba578e90abc1a90aa56157d871618f6de0d764cc8c91e06c68ecd3b9de3824064503384db67beb7fe012232dacaef93a000fba7'  # noqa # type: ignore
+    )).hex() == 'aef843b86916c16f66c84d83a6005d23fd005c9e'
+
+    # Len = 456
+    assert sha1(bytes.fromhex(
+        'd0a249a97b5f1486721a50d4c4ab3f5d674a0e29925d5bf2678ef6d8d521e456bd84aa755328c83fc890837726a8e7877b570dba39579aabdd'  # noqa # type: ignore
+    )).hex() == 'be2cd6f380969be59cde2dff5e848a44e7880bd6'
+
     # Len = 512
     assert sha1(bytes.fromhex(
         '45927e32ddf801caf35e18e7b5078b7f5435278212ec6bb99df884f49b327c6486feae46ba187dc1cc9145121e1492e6b06e9007394dc3'
         + '3b7748f86ac3207cfe'
     )).hex() == 'a70cfbfe7563dd0e665c7c6715a96a8d756950c0'
+
+    # Len = 2096
+    assert sha1(bytes.fromhex(
+        '6cb70d19c096200f9249d2dbc04299b0085eb068257560be3a307dbd741a3378ebfa03fcca610883b07f7fea563a866571822472dade8a'
+        + '0bec4b98202d47a344312976a7bcb3964427eacb5b0525db22066599b81be41e5adaf157d925fac04b06eb6e01deb753babf33be1616'
+        + '2b214e8db017212fafa512cdc8c0d0a15c10f632e8f4f47792c64d3f026004d173df50cf0aa7976066a79a8d78deeeec951dab7cc90f'
+        + '68d16f786671feba0b7d269d92941c4f02f432aa5ce2aab6194dcc6fd3ae36c8433274ef6b1bd0d314636be47ba38d1948343a38bf94'
+        + '06523a0b2a8cd78ed6266ee3c9b5c60620b308cc6b3a73c6060d5268a7d82b6a33b93a6fd6fe1de55231d12c97'
+    )).hex() == '4a75a406f4de5f9e1132069d66717fc424376388'
 
 
 def test():

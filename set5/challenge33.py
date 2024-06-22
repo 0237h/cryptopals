@@ -9,6 +9,25 @@ sys.path.insert(1, path.abspath("set4"))  # Python hack to resolve set1/ challen
 from challenge28 import sha1  # noqa # type: ignore
 
 MAX_PRIVATE_KEY_SIZE_BITS = 2048
+# From https://datatracker.ietf.org/doc/html/rfc3526#section-3
+DH_2048_MODP = (
+    int.from_bytes(
+        bytes.fromhex(
+            "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd1"
+            "29024e088a67cc74020bbea63b139b22514a08798e3404dd"
+            "ef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245"
+            "e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7ed"
+            "ee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3d"
+            "c2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f"
+            "83655d23dca3ad961c62f356208552bb9ed529077096966d"
+            "670c354e4abc9804f1746c08ca18217c32905e462e36ce3b"
+            "e39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9"
+            "de2bcbf6955817183995497cea956ae515d2261898fa0510"
+            "15728e5a8aacaa68ffffffffffffffff"
+        )
+    ),
+    2
+)
 
 
 def dh(p: int, g: int):
@@ -30,28 +49,8 @@ def dh(p: int, g: int):
 
 
 def test():
-    # From https://datatracker.ietf.org/doc/html/rfc3526#section-3
-    dh_2048_MODP = (
-        int.from_bytes(
-            bytes.fromhex(
-                "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd1"
-                "29024e088a67cc74020bbea63b139b22514a08798e3404dd"
-                "ef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245"
-                "e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7ed"
-                "ee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3d"
-                "c2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f"
-                "83655d23dca3ad961c62f356208552bb9ed529077096966d"
-                "670c354e4abc9804f1746c08ca18217c32905e462e36ce3b"
-                "e39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9"
-                "de2bcbf6955817183995497cea956ae515d2261898fa0510"
-                "15728e5a8aacaa68ffffffffffffffff"
-            )
-        ),
-        2
-    )
-
-    alice_pk, alice_pubkey, alice_get_secret, alice_get_enc_keys = dh(*dh_2048_MODP)
-    bob_pk, bob_pubkey, bob_get_secret, _ = dh(*dh_2048_MODP)
+    alice_pk, alice_pubkey, alice_get_secret, alice_get_enc_keys = dh(*DH_2048_MODP)
+    bob_pk, bob_pubkey, bob_get_secret, _ = dh(*DH_2048_MODP)
 
     big_int_to_hex: Callable[[int], str] = lambda x: x.to_bytes(MAX_PRIVATE_KEY_SIZE_BITS // 8).hex()
     print(f"[*] [Alice] Private key: {big_int_to_hex(alice_pk)}")

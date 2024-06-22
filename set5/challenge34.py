@@ -101,6 +101,14 @@ class User:
                 return ()
 
 
+def encrypt_payload(user: User, plaintext: bytes) -> tuple[str, str]:
+    iv = randbytes(16)
+    return (
+        encrypt_aes128_cbc(plaintext, user.get_enc_keys(user.foreign_key)[0], iv).hex(),
+        iv.hex()
+    )
+
+
 def test_protocol():
     alice = User("Alice")
     bob = User("Bob")
@@ -133,21 +141,13 @@ def test_protocol():
     # Send AES-CBC(SHA1(s)[0:16], iv=random(16), msg) + iv
     alice.read()
     message = b"Hello Bob !"
-    iv = randbytes(16)
-    alice.send(bob, MessageType.CH34_AES_MSG, (
-        encrypt_aes128_cbc(message, alice.get_enc_keys(alice.foreign_key)[0], iv).hex(),
-        iv.hex()
-    ))
+    alice.send(bob, MessageType.CH34_AES_MSG, encrypt_payload(alice, message))
     assert alice.foreign_key == bob.public_key
 
     # B->A
     # Send AES-CBC(SHA1(s)[0:16], iv=random(16), A's msg) + iv
-    d_m, iv = bob.read()
-    iv = randbytes(16)
-    bob.send(alice, MessageType.CH34_AES_MSG, (
-        encrypt_aes128_cbc(d_m.encode(), bob.get_enc_keys(bob.foreign_key)[0], iv).hex(),
-        iv.hex()
-    ))
+    d_m, _ = bob.read()
+    bob.send(alice, MessageType.CH34_AES_MSG, encrypt_payload(bob, d_m.encode()))
     assert d_m == message.decode()
 
     # Alice read
@@ -194,36 +194,20 @@ def test():
     )
 
     message = b"Hello Bob !"
-    iv = randbytes(16)
-    alice.send(eve, MessageType.CH34_AES_MSG, (
-        encrypt_aes128_cbc(message, alice.get_enc_keys(alice.foreign_key)[0], iv).hex(),
-        iv.hex()
-    ))
+    alice.send(eve, MessageType.CH34_AES_MSG, encrypt_payload(alice, message))
 
     # M->B
     # Relay that to B (with a twist !)
-    iv = randbytes(16)
-    eve.relay(bob, (
-        encrypt_aes128_cbc(b"I hate you Bob !", eve.get_enc_keys(eve.foreign_key)[0], iv).hex(),
-        iv.hex()
-    ))
+    eve.relay(bob, encrypt_payload(eve, b"I hate you Bob !"))
 
     # B->M
     # Send AES-CBC(SHA1(s)[0:16], iv=random(16), A's msg) + iv
-    d_m, iv = bob.read()
-    iv = randbytes(16)
-    bob.send(eve, MessageType.CH34_AES_MSG, (
-        encrypt_aes128_cbc(d_m.encode(), bob.get_enc_keys(bob.foreign_key)[0], iv).hex(),
-        iv.hex()
-    ))
+    d_m, _ = bob.read()
+    bob.send(eve, MessageType.CH34_AES_MSG, encrypt_payload(bob, d_m.encode()))
 
     # M->A
     # Relay that to A (with a twist !)
-    iv = randbytes(16)
-    eve.relay(alice, (
-        encrypt_aes128_cbc(b"I hate you too Alice !", eve.get_enc_keys(eve.foreign_key)[0], iv).hex(),
-        iv.hex()
-    ))
+    eve.relay(alice, encrypt_payload(eve, b"I hate you too Alice !"))
 
     # Alice read
     alice.read()

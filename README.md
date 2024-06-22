@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 32/66 (48.48 %) completed (last completed, Challenge 32)
+> Progress: 34/66 (51.51 %) completed (last completed, Challenge 34)
 
 ### Set 1
 
@@ -69,8 +69,8 @@ Use `-vv` and `-s` for more output.
 
 ### Set 5
 
-- [ ] **Challenge 33** *Implement Diffie-Hellman*
-- [ ] **Challenge 34** *Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection*
+- [x] **Challenge 33** *Implement Diffie-Hellman*
+- [x] **Challenge 34** *Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection*
 - [ ] **Challenge 35** *Implement DH with negotiated groups, and break with malicious "g" parameters*
 - [ ] **Challenge 36** *Implement Secure Remote Password (SRP)*
 - [ ] **Challenge 37** *Break SRP with a zero key*

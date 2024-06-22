@@ -35,7 +35,7 @@ def dh(p: int, g: int):
     pub_k = pow(g, priv_k, p)
 
     def _secret(other_pub_k: int) -> int:
-        return pow(other_pub_k, priv_k, p)
+        return abs(pow(other_pub_k, priv_k, p))
 
     def _enc_keys(other_pub_k: int) -> tuple[bytes, bytes]:
         '''Return two 128-bits keys for encryption and MAC derived from the DH secret using SHA-1'''

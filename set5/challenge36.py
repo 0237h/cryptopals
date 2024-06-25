@@ -82,7 +82,7 @@ class User(U):
                 if salt:
                     self.salt = salt
 
-                if foreign_key:
+                if foreign_key is not None:
                     self.foreign_key = foreign_key
                     self.u = sha1_hash(*(
                         (self.foreign_key, self.public_key) if self.server

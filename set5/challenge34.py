@@ -16,6 +16,8 @@ from challenge10 import encrypt_aes128_cbc, decrypt_aes128_cbc  # noqa # type: i
 class MessageType(Enum):
     CH34_DH_SETUP = auto()
     CH34_AES_MSG = auto()
+    CH35_SRP_SETUP = auto()
+    CH35_SRP_HMAC = auto()
 
 
 @dataclass
@@ -116,18 +118,17 @@ def test_protocol():
     # A->B
     # Send "p", "g", "A"
     alice.init_dh()
-    alice.send(bob, MessageType.CH34_DH_SETUP, (DH_2048_MODP[0], DH_2048_MODP[1], alice.public_key))
     assert (
         hasattr(alice, "private_key")
         and hasattr(alice, "public_key")
         and hasattr(alice, "get_secret")
         and hasattr(alice, "get_enc_keys")
     )
+    alice.send(bob, MessageType.CH34_DH_SETUP, (DH_2048_MODP[0], DH_2048_MODP[1], alice.public_key))
 
     # B->A
     # Send "B"
     bob.read()
-    bob.send(alice, MessageType.CH34_DH_SETUP, ("", "", bob.public_key))
     assert (
         hasattr(bob, "private_key")
         and hasattr(bob, "public_key")
@@ -136,19 +137,20 @@ def test_protocol():
         and hasattr(bob, "foreign_key")
         and bob.foreign_key == alice.public_key
     )
+    bob.send(alice, MessageType.CH34_DH_SETUP, ("", "", bob.public_key))
 
     # A->B
     # Send AES-CBC(SHA1(s)[0:16], iv=random(16), msg) + iv
     alice.read()
+    assert alice.foreign_key == bob.public_key
     message = b"Hello Bob !"
     alice.send(bob, MessageType.CH34_AES_MSG, encrypt_payload(alice, message))
-    assert alice.foreign_key == bob.public_key
 
     # B->A
     # Send AES-CBC(SHA1(s)[0:16], iv=random(16), A's msg) + iv
     d_m, _ = bob.read()
-    bob.send(alice, MessageType.CH34_AES_MSG, encrypt_payload(bob, d_m.encode()))
     assert d_m == message.decode()
+    bob.send(alice, MessageType.CH34_AES_MSG, encrypt_payload(bob, d_m.encode()))
 
     # Alice read
     d_m, _ = alice.read()

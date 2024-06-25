@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 35/66 (53.03 %) completed (last completed, Challenge 35)
+> Progress: 37/66 (56.06 %) completed (last completed, Challenge 37)
 
 ### Set 1
 
@@ -72,8 +72,8 @@ Use `-vv` and `-s` for more output.
 - [x] **Challenge 33** *Implement Diffie-Hellman*
 - [x] **Challenge 34** *Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection*
 - [x] **Challenge 35** *Implement DH with negotiated groups, and break with malicious "g" parameters*
-- [ ] **Challenge 36** *Implement Secure Remote Password (SRP)*
-- [ ] **Challenge 37** *Break SRP with a zero key*
+- [x] **Challenge 36** *Implement Secure Remote Password (SRP)*
+- [x] **Challenge 37** *Break SRP with a zero key*
 - [ ] **Challenge 38** *Offline dictionary attack on simplified SRP*
 - [ ] **Challenge 39** *Implement RSA*
 - [ ] **Challenge 40** *Implement an E=3 RSA Broadcast attack*

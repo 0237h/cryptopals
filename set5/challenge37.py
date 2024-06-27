@@ -28,14 +28,14 @@ def test():
     # C->S
     # Send I, A=g**a % N (a la Diffie Hellman)
     carol.init_dh()
-    carol.send(steve, MessageType.CH35_SRP_SETUP, (None, 0))  # Login without password with A = 0 or multiple of N
+    carol.send(steve, MessageType.CH35_SRP_SETUP, (None, 0, None))  # Login without password with A = 0 or multiple of N
 
     # S->C
     # Send salt, B=kv + g**b % N
     # Compute string uH = SHA256(A|B), u = integer of uH
     steve.public_key = (steve.public_key + (steve.k * steve.v)) % steve.N  # B=kv + g**b % N
     steve.read()
-    steve.send(carol, MessageType.CH35_SRP_SETUP, (steve.salt, steve.public_key))
+    steve.send(carol, MessageType.CH35_SRP_SETUP, (steve.salt, steve.public_key, None))
     carol.read()
 
     # C, S

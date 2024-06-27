@@ -49,7 +49,7 @@ class User(U):
         self.v = pow(self.g, sha1_hash(self.salt, email, password), self.N)
         self.server = True  # Identify server from client
 
-    def compute_k(self, email: bytes, password: bytes) -> bytes:
+    def compute_k(self, email: bytes, password: bytes, simplified: bool = False) -> bytes:
         if self.server:
             self.K = sha1_hash(
                 pow(self.foreign_key * pow(self.v, self.u, self.N), self.private_key, self.N)
@@ -61,7 +61,7 @@ class User(U):
                     self.foreign_key - self.k * pow(self.g, x, self.N),
                     self.private_key + self.u * x,
                     self.N
-                )
+                ) if not simplified else pow(self.foreign_key, self.private_key + self.u * x, self.N)
             )
 
         self.K = int_to_bytes(self.K)
@@ -74,17 +74,17 @@ class User(U):
 
         match message_type:
             case MessageType.CH35_SRP_SETUP:
-                assert len(message_payload) == 2, \
+                assert len(message_payload) >= 2, \
                     f"[-] Could not parse message (type={message_type}) from {sender}: wrong_payload\n{message_payload}"
 
-                salt, foreign_key = message_payload
+                salt, foreign_key, u = message_payload
 
-                if salt:
+                if salt is not None:
                     self.salt = salt
 
                 if foreign_key is not None:
                     self.foreign_key = foreign_key
-                    self.u = sha1_hash(*(
+                    self.u = u if u else sha1_hash(*(
                         (self.foreign_key, self.public_key) if self.server
                         else (self.public_key, self.foreign_key)
                     ))
@@ -122,14 +122,14 @@ def test():
     # C->S
     # Send I, A=g**a % N (a la Diffie Hellman)
     carol.init_dh()
-    carol.send(steve, MessageType.CH35_SRP_SETUP, (None, carol.public_key))
+    carol.send(steve, MessageType.CH35_SRP_SETUP, (None, carol.public_key, None))
 
     # S->C
     # Send salt, B=kv + g**b % N
     # Compute string uH = SHA256(A|B), u = integer of uH
     steve.public_key = (steve.public_key + (steve.k * steve.v)) % steve.N  # B=kv + g**b % N
     steve.read()
-    steve.send(carol, MessageType.CH35_SRP_SETUP, (steve.salt, steve.public_key))
+    steve.send(carol, MessageType.CH35_SRP_SETUP, (steve.salt, steve.public_key, None))
     carol.read()
 
     # C, S

@@ -1,5 +1,6 @@
-from math import ceil, lcm
+from math import ceil, gcd
 from secrets import randbelow, randbits, token_bytes
+from typing import Optional
 
 
 def is_probably_prime(n: int, iterations: int = 8) -> bool:
@@ -83,24 +84,29 @@ def os2ip(x: bytes) -> int:
     return int.from_bytes(x)
 
 
-def rsa(key_size_bits: int = 1024):
+def rsa(key_size_bits: int = 1024, e: int = 65537, pq: Optional[tuple[int, int]] = None):
     """Adapted from https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Key_generation"""
-    p, q = generate_prime(key_size_bits), generate_prime(key_size_bits)
+    p, q = pq if pq else (generate_prime(key_size_bits), generate_prime(key_size_bits))
+    # Need to make sure `e` and `et` will be coprime (see https://crypto.stackexchange.com/a/12256)
+    while gcd(p-1, e) != 1 or gcd(q-1, e) != 1:
+        p, q = generate_prime(key_size_bits), generate_prime(key_size_bits)
+
     n = p * q
-    et = lcm(p-1, q-1)
-    e = 65537
+    et = (p-1)*(q-1)
     d = invmod(e, et)
 
-    key_size_bytes = ceil(2*key_size_bits / 8)
+    key_size_bytes = ceil(key_size_bits / 4)  # N is multiple of two `key_size_bits` number so only divide by 4
 
-    def _encrypt(plaintext: bytes, public_key: tuple[int, int] = (e, n)):
+    def _encrypt(plaintext: bytes, public_key: tuple[int, int] = (e, n), use_padding: bool = True):
         """From https://datatracker.ietf.org/doc/html/rfc8017#section-7.2.1"""
-        m = os2ip(pkcs1_v1_5(public_key, plaintext))
+        assert len(plaintext) < key_size_bytes, f"encryption error: can only encrypt {key_size_bytes-1} bytes at a time"
+
+        m = os2ip(pkcs1_v1_5(public_key, plaintext)) if use_padding else os2ip(plaintext)
         c = pow(m, *public_key)
 
         return i2osp(c, key_size_bytes)
 
-    def _decrypt(ciphertext: bytes):
+    def _decrypt(ciphertext: bytes, use_padding: bool = True):
         """From https://datatracker.ietf.org/doc/html/rfc8017#section-7.2.2"""
         assert len(ciphertext) == key_size_bytes, "decryption error: ciphertext length doesn't match key size"
 
@@ -108,9 +114,11 @@ def rsa(key_size_bits: int = 1024):
         m = pow(c, d, n)
         em = i2osp(m, key_size_bytes)
 
-        # Warning: not timing resistant
-        assert em[0] != 0x0 or em[1] != 0x1 or em.find(b'\x00', 2) == -1 or em.find(b'\x00', 2) <= 9, "decryption error"
+        if not use_padding:
+            return em.strip(b'\x00')
 
+        # Warning: padding check not timing resistant
+        assert em[0] != 0x0 or em[1] != 0x1 or em.find(b'\x00', 2) == -1 or em.find(b'\x00', 2) <= 9, "decryption error"
         return em[em.find(b'\x00', 2)+1:]
 
     return (

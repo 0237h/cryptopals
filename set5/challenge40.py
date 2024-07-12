@@ -75,9 +75,12 @@ def test():
               + c_1 * m_s_1 * invmod(m_s_1, n_1)
               + c_2 * m_s_2 * invmod(m_s_2, n_2)) % (n_0 * n_1 * n_2)
     root = find_invpow(result, 3)
+    decrypted = i2osp(root, len(message))
+
+    assert decrypted == message
 
     print(f"[+] Found cubic root:\n{root}")
-    print(f"[+] Decrypted message:\n{i2osp(root, len(message))}")
+    print(f"[+] Decrypted message:\n{decrypted}")
 
 
 if __name__ == "__main__":

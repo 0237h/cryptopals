@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 38/66 (57.57 %) completed (last completed, Challenge 38)
+> Progress: 40/66 (60.60 %) completed (last completed, Challenge 40)
 
 ### Set 1
 
@@ -75,8 +75,8 @@ Use `-vv` and `-s` for more output.
 - [x] **Challenge 36** *Implement Secure Remote Password (SRP)*
 - [x] **Challenge 37** *Break SRP with a zero key*
 - [x] **Challenge 38** *Offline dictionary attack on simplified SRP*
-- [ ] **Challenge 39** *Implement RSA*
-- [ ] **Challenge 40** *Implement an E=3 RSA Broadcast attack*
+- [x] **Challenge 39** *Implement RSA*
+- [x] **Challenge 40** *Implement an E=3 RSA Broadcast attack*
 
 ### Set 6
 

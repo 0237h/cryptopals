@@ -43,14 +43,17 @@ def find_invpow(x, n):
 
 
 class User:
-    def __init__(self, name: str, pq: Optional[tuple[int, int]] = None) -> None:
+    def __init__(self, name: str, e: int = 65537, pq: Optional[tuple[int, int]] = None) -> None:
         self.name = name
-        self.key_length, self.pub_key, self.priv_key, self.enc, self.dec = rsa(e=3, pq=pq)
+        self.key_length, self.pub_key, self.priv_key, self.enc, self.dec = rsa(e=e, pq=pq)
         print(f"[*] [{self.name}] Key length: {self.key_length}")
         print(f"[*] [{self.name}] Public key: {self.pub_key}")
 
-    def encrypt(self, plaintext: bytes) -> bytes:
-        return self.enc(plaintext, use_padding=False)
+    def encrypt(self, plaintext: bytes, public_key: Optional[tuple[int, int]] = None) -> bytes:
+        if not public_key:
+            public_key = self.pub_key
+
+        return self.enc(plaintext, public_key, use_padding=False)
 
     def decrypt(self, ciphertext: bytes) -> bytes:
         return self.dec(ciphertext, use_padding=False)
@@ -58,9 +61,9 @@ class User:
 
 def test():
     print(f"[x] Generating RSA keys...")
-    alice = User('Alice', PQS[0] if USE_PRECOMPUTED_RSA_KEYS else None)
-    bob = User('Bob', PQS[1] if USE_PRECOMPUTED_RSA_KEYS else None)
-    charlie = User('Charlie', PQS[2] if USE_PRECOMPUTED_RSA_KEYS else None)
+    alice = User('Alice', e=3, pq=PQS[0] if USE_PRECOMPUTED_RSA_KEYS else None)
+    bob = User('Bob', e=3, pq=PQS[1] if USE_PRECOMPUTED_RSA_KEYS else None)
+    charlie = User('Charlie', e=3, pq=PQS[2] if USE_PRECOMPUTED_RSA_KEYS else None)
 
     message = b"YELLOW SUBMARINE"*15
     ciphertexts = (alice.encrypt(message), bob.encrypt(message), charlie.encrypt(message))

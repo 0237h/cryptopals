@@ -51,7 +51,7 @@ def invmod(a: int, b: int) -> int:
     return pow(a, -1, b)
 
 
-def pkcs1_v1_5(public_key: tuple[int, int], message: bytes) -> bytes:
+def rsaes_pkcs1_v1_5(public_key: tuple[int, int], message: bytes) -> bytes:
     """From https://datatracker.ietf.org/doc/html/rfc8017#section-7.2"""
     _, n = public_key
     k = ceil(n.bit_length() / 8)
@@ -99,9 +99,9 @@ def rsa(key_size_bits: int = 1024, e: int = 65537, pq: Optional[tuple[int, int]]
 
     def _encrypt(plaintext: bytes, public_key: tuple[int, int] = (e, n), use_padding: bool = True):
         """From https://datatracker.ietf.org/doc/html/rfc8017#section-7.2.1"""
-        assert len(plaintext) < key_size_bytes, f"encryption error: can only encrypt {key_size_bytes-1} bytes at a time"
+        assert len(plaintext) <= key_size_bytes, f"encryption error: can only encrypt {key_size_bytes-1} bytes at a time"
 
-        m = os2ip(pkcs1_v1_5(public_key, plaintext)) if use_padding else os2ip(plaintext)
+        m = os2ip(rsaes_pkcs1_v1_5(public_key, plaintext)) if use_padding else os2ip(plaintext)
         c = pow(m, *public_key)
 
         return i2osp(c, key_size_bytes)
@@ -118,7 +118,10 @@ def rsa(key_size_bits: int = 1024, e: int = 65537, pq: Optional[tuple[int, int]]
             return em.strip(b'\x00')
 
         # Warning: padding check not timing resistant
-        assert em[0] != 0x0 or em[1] != 0x1 or em.find(b'\x00', 2) == -1 or em.find(b'\x00', 2) <= 9, "decryption error"
+        assert em[0] == 0x0 \
+            and em[1] == 0x2 \
+            and em.find(b'\x00', 2) != -1 \
+            and em.find(b'\x00', 2) > 9, "decryption error"
         return em[em.find(b'\x00', 2)+1:]
 
     return (

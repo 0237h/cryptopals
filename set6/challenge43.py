@@ -23,7 +23,7 @@ def secrets_randint(a_inclusive: int, b_inclusive: int) -> int:
 
 
 def dsa_sha1(pqg: Optional[tuple[int, int, int]] = None, xy: Optional[tuple[int, int]] = None):
-    """Adapted from https://en.wikipedia.org/wiki/Digital_Signature_Algorithm#1._Key_generation"""
+    """Adapted from https://en.wikipedia.org/wiki/Digital_Signature_Algorithm#Operation"""
     # From FIPS 186-4, choose 160 bits for SHA-1
     L, N = (1024, 160)
 

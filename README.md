@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 41/66 (62.12 %) completed (last completed, Challenge 41)
+> Progress: 43/66 (65.15 %) completed (last completed, Challenge 43)
 
 ### Set 1
 
@@ -81,8 +81,8 @@ Use `-vv` and `-s` for more output.
 ### Set 6
 
 - [x] **Challenge 41** *Implement unpadded message recovery oracle*
-- [ ] **Challenge 42** *Bleichenbacher's e=3 RSA Attack*
-- [ ] **Challenge 43** *DSA key recovery from nonce*
+- [x] **Challenge 42** *Bleichenbacher's e=3 RSA Attack*
+- [x] **Challenge 43** *DSA key recovery from nonce*
 - [ ] **Challenge 44** *DSA nonce recovery from repeated nonce*
 - [ ] **Challenge 45** *DSA parameter tampering*
 - [ ] **Challenge 46** *RSA parity oracle*

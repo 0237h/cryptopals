@@ -80,19 +80,21 @@ def dsa_sha1(pqg: Optional[tuple[int, int, int]] = None, xy: Optional[tuple[int,
         private_key = secrets_randint(1, q-1)
         public_key = pow(g, private_key, p)
 
-    def _dsa_sha1_sign(message: bytes, k: Optional[int] = None) -> tuple[int, int]:
+    def _dsa_sha1_sign(message: bytes, k: Optional[int] = None, bypass_safety_check: bool = False) -> tuple[int, int]:
         """Adapted from https://en.wikipedia.org/wiki/Digital_Signature_Algorithm#3._Signing"""
         while True:
             k = secrets_randint(1, q-1) if k is None else k
             r = pow(g, k, p) % q
             s = (invmod(k, q)*(os2ip(sha1(message)) + private_key*r)) % q
 
-            if r != 0 and s != 0:
+            if bypass_safety_check or (r != 0 and s != 0):
                 return (r, s)
 
-    def _dsa_sha1_verify(message: bytes, r: int, s: int, public_key: int = public_key) -> bool:
+    def _dsa_sha1_verify(
+        message: bytes, r: int, s: int, public_key: int = public_key, bypass_safety_check: bool = False
+    ) -> bool:
         """Adapted from https://en.wikipedia.org/wiki/Digital_Signature_Algorithm#4._Signature_Verification"""
-        assert r > 0 and r < q and s > 0 and s < q, "Invalid signature"
+        assert bypass_safety_check or (r > 0 and r < q and s > 0 and s < q), "Invalid signature"
 
         w = invmod(s, q)
         u1 = (os2ip(sha1(message)) * w) % q

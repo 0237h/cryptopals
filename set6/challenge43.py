@@ -122,7 +122,7 @@ def test_secrets_randint():
     try:
         secrets_randint(1, 0)
     except AssertionError as e:
-        assert str(e) == "a cannot be greater than b for range ([a, b])"
+        assert "a cannot be greater than b for range ([a, b])" in str(e)
 
     for (a, b) in valid_test_ranges:
         for _ in range(b-a+1):  # Sample n = b-a values

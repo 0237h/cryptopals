@@ -21,7 +21,7 @@ Use `-vv` and `-s` for more output.
 
 ## Progress
 
-> Progress: 45/66 (68.18 %) completed (last completed, Challenge 45)
+> Progress: 46/66 (69.69 %) completed (last completed, Challenge 46)
 
 ### Set 1
 
@@ -85,7 +85,7 @@ Use `-vv` and `-s` for more output.
 - [x] **Challenge 43** *DSA key recovery from nonce*
 - [x] **Challenge 44** *DSA nonce recovery from repeated nonce*
 - [x] **Challenge 45** *DSA parameter tampering*
-- [ ] **Challenge 46** *RSA parity oracle*
+- [x] **Challenge 46** *RSA parity oracle*
 - [ ] **Challenge 47** *Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)*
 - [ ] **Challenge 48** *Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)*
 
